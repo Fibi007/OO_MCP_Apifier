@@ -1,0 +1,70 @@
+{
+  "properties": {
+    "connectionParameters": {
+      "token": {
+        "type": "oauthSetting",
+        "oAuthSettings": {
+          "identityProvider": "oauth2",
+          "clientId": "<CLIENT_ID>",
+          "scopes": [
+            "openid profile email offline_access"
+          ],
+          "redirectMode": "GlobalPerConnector",
+          "redirectUrl": "https://global.consent.azure-apim.net/redirect",
+          "properties": {
+            "IsFirstParty": "False"
+          },
+          "customParameters": {
+            "authorizationUrl": {
+              "value": "https://authkit.optionomega.com/oauth2/authorize"
+            },
+            "tokenUrl": {
+              "value": "https://authkit.optionomega.com/oauth2/token"
+            },
+            "refreshUrl": {
+              "value": "https://authkit.optionomega.com/oauth2/token"
+            }
+          }
+        }
+      }
+    },
+    "iconBrandColor": "#1F3A5F",
+    "scriptOperations": [
+      "RunBacktest",
+      "GetBacktestStatus",
+      "GetBacktestResults",
+      "CancelBacktest",
+      "ListBacktests",
+      "GetSavedBacktest",
+      "SaveBacktest",
+      "ReplaceSavedBacktest",
+      "EditSavedBacktest",
+      "RunPortfolio",
+      "GetPortfolioStatus",
+      "GetPortfolioResults",
+      "CancelPortfolio",
+      "ListPortfolios",
+      "GetSavedPortfolio",
+      "SavePortfolio",
+      "ReplaceSavedPortfolio",
+      "EditSavedPortfolio",
+      "ListOptimizerParameters",
+      "RunOptimizer",
+      "GetOptimizationStatus",
+      "CancelOptimization",
+      "ListOptimizations",
+      "GetOptimizationResults",
+      "ListAutomatedStrategies",
+      "GetAutomatedStrategy",
+      "ListOpenAutomatedTrades",
+      "ListClosedAutomatedTrades",
+      "GetTradeLog",
+      "GetEquityCurve",
+      "ListTools",
+      "GetUsageLimits"
+    ],
+    "capabilities": [],
+    "publisher": "Community",
+    "stackOwner": "OptionOmega"
+  }
+}

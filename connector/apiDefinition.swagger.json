@@ -1,0 +1,3413 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Option Omega",
+    "description": "OptionOmega backtests, portfolios and optimizations via its MCP server.",
+    "version": "1.0"
+  },
+  "host": "mcp.optionomega.com",
+  "basePath": "/",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/tools/run_backtest": {
+      "post": {
+        "operationId": "RunBacktest",
+        "summary": "Run backtest",
+        "description": "Starts a backtest and returns immediately with a runId. Then poll GetBacktestStatus. parameters is the complete strategy; the easiest way is to take the parameters object from GetSavedBacktest and change only what you need.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "parameters": {
+                  "type": "object",
+                  "description": "Complete strategy configuration (JSON); see parameters in GetSavedBacktest.",
+                  "x-ms-summary": "Strategy (JSON)"
+                }
+              },
+              "required": [
+                "parameters"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "runId": {
+                  "type": "string",
+                  "description": "Run id."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "queued, running, complete, failed or cancelled."
+                },
+                "pollAfterMs": {
+                  "type": "integer",
+                  "description": "Milliseconds until the next status call; absent in a final state."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/get_backtest_status": {
+      "post": {
+        "operationId": "GetBacktestStatus",
+        "summary": "Get backtest status",
+        "description": "Status of a run started with RunBacktest. Polling interval: pollAfterMs.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "runId": {
+                  "type": "string",
+                  "description": "Run id, as returned by RunBacktest or RunPortfolio."
+                }
+              },
+              "required": [
+                "runId"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "runId": {
+                  "type": "string",
+                  "description": "Run id."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "queued, running, complete, failed or cancelled."
+                },
+                "pollAfterMs": {
+                  "type": "integer",
+                  "description": "Milliseconds until the next status call; absent in a final state."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/get_backtest_results": {
+      "post": {
+        "operationId": "GetBacktestResults",
+        "summary": "Get backtest results",
+        "description": "Metrics of a completed backtest run.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "runId": {
+                  "type": "string",
+                  "description": "Run id, as returned by RunBacktest or RunPortfolio."
+                }
+              },
+              "required": [
+                "runId"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "startingFunds": {
+                  "type": "number"
+                },
+                "endingFunds": {
+                  "type": "number"
+                },
+                "profit": {
+                  "type": "number"
+                },
+                "minFunds": {
+                  "type": "number"
+                },
+                "maxFunds": {
+                  "type": "number"
+                },
+                "cagr": {
+                  "type": "number",
+                  "description": "CAGR as a percentage."
+                },
+                "maxDrawdownPercentage": {
+                  "type": "number",
+                  "description": "Max drawdown, as a negative percentage."
+                },
+                "marRatio": {
+                  "type": "number"
+                },
+                "sharpeRatio": {
+                  "type": "number"
+                },
+                "sortinoRatio": {
+                  "type": "number"
+                },
+                "winPercentage": {
+                  "type": "number"
+                },
+                "numberOfTrades": {
+                  "type": "integer"
+                },
+                "numberOfOpenTrades": {
+                  "type": "integer"
+                },
+                "averageProfitPerLot": {
+                  "type": "number"
+                },
+                "averageGainPerLot": {
+                  "type": "number"
+                },
+                "averageLossPerLot": {
+                  "type": "number"
+                },
+                "maxGainPerLot": {
+                  "type": "number"
+                },
+                "maxLossPerLot": {
+                  "type": "number"
+                },
+                "averageDaysInTrade": {
+                  "type": "number"
+                },
+                "averageMinutesInTrade": {
+                  "type": "number"
+                },
+                "totalPremium": {
+                  "type": "number"
+                },
+                "premiumCaptureRatePercentage": {
+                  "type": "number"
+                },
+                "annualMetrics": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "year": {
+                        "type": "integer"
+                      },
+                      "profitLoss": {
+                        "type": "number"
+                      },
+                      "profitLossPercentage": {
+                        "type": "number"
+                      },
+                      "maxDrawdownPercentage": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  "description": "Metrics per calendar year."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/cancel_backtest": {
+      "post": {
+        "operationId": "CancelBacktest",
+        "summary": "Cancel backtest",
+        "description": "Stops a running or queued backtest run.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "runId": {
+                  "type": "string",
+                  "description": "Run id, as returned by RunBacktest or RunPortfolio."
+                }
+              },
+              "required": [
+                "runId"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "runId": {
+                  "type": "string",
+                  "description": "Run id."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "queued, running, complete, failed or cancelled."
+                },
+                "pollAfterMs": {
+                  "type": "integer",
+                  "description": "Milliseconds until the next status call; absent in a final state."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/list_backtests": {
+      "post": {
+        "operationId": "ListBacktests",
+        "summary": "List saved backtests",
+        "description": "Saved backtests, sorted by name, with headline metrics.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "integer",
+                  "description": "Maximum number of entries per page."
+                },
+                "offset": {
+                  "type": "integer",
+                  "description": "Zero-based start position; pass nextOffset from the previous response."
+                },
+                "includeArchived": {
+                  "type": "boolean",
+                  "description": "Include archived entries.",
+                  "default": false
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "tags": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "isShared": {
+                        "type": "boolean"
+                      },
+                      "isArchived": {
+                        "type": "boolean"
+                      },
+                      "underlying": {
+                        "type": "string"
+                      },
+                      "rangeStart": {
+                        "type": "string"
+                      },
+                      "rangeEnd": {
+                        "type": "string"
+                      },
+                      "startingFunds": {
+                        "type": "number"
+                      },
+                      "endingFunds": {
+                        "type": "number"
+                      },
+                      "profit": {
+                        "type": "number"
+                      },
+                      "cagr": {
+                        "type": "number"
+                      },
+                      "maxDrawdownPercentage": {
+                        "type": "number"
+                      },
+                      "winPercentage": {
+                        "type": "number"
+                      },
+                      "numberOfTrades": {
+                        "type": "integer"
+                      },
+                      "marRatio": {
+                        "type": "number"
+                      },
+                      "sharpeRatio": {
+                        "type": "number"
+                      },
+                      "sortinoRatio": {
+                        "type": "number"
+                      },
+                      "premiumCaptureRatePercentage": {
+                        "type": "number"
+                      },
+                      "averageProfitPerLot": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "totalCount": {
+                  "type": "integer"
+                },
+                "offset": {
+                  "type": "integer"
+                },
+                "nextOffset": {
+                  "type": "integer",
+                  "description": "Offset of the next page; null on the last page."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/get_saved_backtest": {
+      "post": {
+        "operationId": "GetSavedBacktest",
+        "summary": "Get saved backtest",
+        "description": "Complete strategy (parameters) and metrics (result) of a saved backtest.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "savedBacktestId": {
+                  "type": "string",
+                  "description": "Saved backtest id (from ListBacktests)."
+                }
+              },
+              "required": [
+                "savedBacktestId"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "isShared": {
+                  "type": "boolean"
+                },
+                "isArchived": {
+                  "type": "boolean"
+                },
+                "parameters": {
+                  "type": "object",
+                  "description": "Strategy configuration; usable as input for RunBacktest."
+                },
+                "result": {
+                  "type": "object",
+                  "properties": {
+                    "startingFunds": {
+                      "type": "number"
+                    },
+                    "endingFunds": {
+                      "type": "number"
+                    },
+                    "profit": {
+                      "type": "number"
+                    },
+                    "minFunds": {
+                      "type": "number"
+                    },
+                    "maxFunds": {
+                      "type": "number"
+                    },
+                    "cagr": {
+                      "type": "number",
+                      "description": "CAGR as a percentage."
+                    },
+                    "maxDrawdownPercentage": {
+                      "type": "number",
+                      "description": "Max drawdown, as a negative percentage."
+                    },
+                    "marRatio": {
+                      "type": "number"
+                    },
+                    "sharpeRatio": {
+                      "type": "number"
+                    },
+                    "sortinoRatio": {
+                      "type": "number"
+                    },
+                    "winPercentage": {
+                      "type": "number"
+                    },
+                    "numberOfTrades": {
+                      "type": "integer"
+                    },
+                    "numberOfOpenTrades": {
+                      "type": "integer"
+                    },
+                    "averageProfitPerLot": {
+                      "type": "number"
+                    },
+                    "averageGainPerLot": {
+                      "type": "number"
+                    },
+                    "averageLossPerLot": {
+                      "type": "number"
+                    },
+                    "maxGainPerLot": {
+                      "type": "number"
+                    },
+                    "maxLossPerLot": {
+                      "type": "number"
+                    },
+                    "averageDaysInTrade": {
+                      "type": "number"
+                    },
+                    "averageMinutesInTrade": {
+                      "type": "number"
+                    },
+                    "totalPremium": {
+                      "type": "number"
+                    },
+                    "premiumCaptureRatePercentage": {
+                      "type": "number"
+                    },
+                    "annualMetrics": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "year": {
+                            "type": "integer"
+                          },
+                          "profitLoss": {
+                            "type": "number"
+                          },
+                          "profitLossPercentage": {
+                            "type": "number"
+                          },
+                          "maxDrawdownPercentage": {
+                            "type": "number"
+                          }
+                        }
+                      },
+                      "description": "Metrics per calendar year."
+                    }
+                  }
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/save_backtest": {
+      "post": {
+        "operationId": "SaveBacktest",
+        "summary": "Save backtest run",
+        "description": "Saves a completed run as a new saved backtest.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "runId": {
+                  "type": "string",
+                  "description": "Run id, as returned by RunBacktest or RunPortfolio."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Name as it appears in the list."
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Optional description."
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Optional tags."
+                },
+                "isShared": {
+                  "type": "boolean",
+                  "description": "Share. Defaults to false.",
+                  "default": false
+                }
+              },
+              "required": [
+                "runId",
+                "name"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "savedBacktestId": {
+                  "type": "string",
+                  "description": "Saved backtest id."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/replace_saved_backtest": {
+      "post": {
+        "operationId": "ReplaceSavedBacktest",
+        "summary": "Replace saved backtest",
+        "description": "Overwrites the strategy and result of a saved backtest with a run. Cannot be undone.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "runId": {
+                  "type": "string",
+                  "description": "Run id, as returned by RunBacktest or RunPortfolio."
+                },
+                "savedBacktestId": {
+                  "type": "string",
+                  "description": "Saved backtest id (from ListBacktests)."
+                }
+              },
+              "required": [
+                "runId",
+                "savedBacktestId"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "savedBacktestId": {
+                  "type": "string",
+                  "description": "Saved backtest id."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/edit_saved_backtest": {
+      "post": {
+        "operationId": "EditSavedBacktest",
+        "summary": "Rename or tag saved backtest",
+        "description": "Changes the name, description, tags, sharing or archived state. Only the fields you supply change.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "savedBacktestId": {
+                  "type": "string",
+                  "description": "Saved backtest id (from ListBacktests)."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "New name. Omit to keep the current one."
+                },
+                "description": {
+                  "type": "string",
+                  "description": "New description. Empty text clears it."
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Complete new list of tags."
+                },
+                "isShared": {
+                  "type": "boolean",
+                  "description": "Share with other OptionOmega users."
+                },
+                "isArchived": {
+                  "type": "boolean",
+                  "description": "Archive or restore."
+                }
+              },
+              "required": [
+                "savedBacktestId"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "savedBacktestId": {
+                  "type": "string",
+                  "description": "Saved backtest id."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/run_portfolio": {
+      "post": {
+        "operationId": "RunPortfolio",
+        "summary": "Run portfolio",
+        "description": "Starts a portfolio backtest from saved backtests. Then poll GetPortfolioStatus.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "strategies": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "savedBacktestId": {
+                            "type": "string",
+                            "description": "Id of a saved backtest."
+                          },
+                          "allocationPercentage": {
+                            "type": "number",
+                            "description": "Allocation per trade as a percentage; omit to keep the saved value."
+                          },
+                          "maxAllocationAmount": {
+                            "type": "number",
+                            "description": "Dollar cap per trade; 0 removes it."
+                          },
+                          "maxContractsPerTrade": {
+                            "type": "integer",
+                            "description": "Max contracts per trade; 0 removes the cap."
+                          },
+                          "capitalPerContract": {
+                            "type": "number",
+                            "description": "Capital per contract in USD; 0 turns it off."
+                          },
+                          "ignoreMarginRequirements": {
+                            "type": "boolean",
+                            "description": "Ignore margin requirements."
+                          }
+                        }
+                      },
+                      "description": "1 to 30 saved backtests."
+                    },
+                    "rangeStart": {
+                      "type": "string",
+                      "description": "First day, yyyy-MM-dd."
+                    },
+                    "rangeEnd": {
+                      "type": "string",
+                      "description": "Last day, yyyy-MM-dd; yesterday at the latest (US Eastern)."
+                    },
+                    "startingFunds": {
+                      "type": "number",
+                      "description": "Starting funds in USD."
+                    },
+                    "closeOpenTradesAtTestCompletion": {
+                      "type": "boolean",
+                      "description": "Close open trades at the end."
+                    },
+                    "monthlyWithdrawalMode": {
+                      "type": "string",
+                      "description": "none, resetToStartingFunds or fixedAmount."
+                    },
+                    "monthlyWithdrawalAmount": {
+                      "type": "number",
+                      "description": "Monthly withdrawal for fixedAmount."
+                    }
+                  },
+                  "required": [
+                    "strategies"
+                  ]
+                }
+              },
+              "required": [
+                "parameters"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "runId": {
+                  "type": "string",
+                  "description": "Run id."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "queued, running, complete, failed or cancelled."
+                },
+                "pollAfterMs": {
+                  "type": "integer",
+                  "description": "Milliseconds until the next status call; absent in a final state."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/get_portfolio_status": {
+      "post": {
+        "operationId": "GetPortfolioStatus",
+        "summary": "Get portfolio status",
+        "description": "Status of a run started with RunPortfolio.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "runId": {
+                  "type": "string",
+                  "description": "Run id, as returned by RunBacktest or RunPortfolio."
+                }
+              },
+              "required": [
+                "runId"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "runId": {
+                  "type": "string",
+                  "description": "Run id."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "queued, running, complete, failed or cancelled."
+                },
+                "pollAfterMs": {
+                  "type": "integer",
+                  "description": "Milliseconds until the next status call; absent in a final state."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/get_portfolio_results": {
+      "post": {
+        "operationId": "GetPortfolioResults",
+        "summary": "Get portfolio results",
+        "description": "Metrics of a completed portfolio run, including strategyResults.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "runId": {
+                  "type": "string",
+                  "description": "Run id, as returned by RunBacktest or RunPortfolio."
+                }
+              },
+              "required": [
+                "runId"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "startingFunds": {
+                  "type": "number"
+                },
+                "endingFunds": {
+                  "type": "number"
+                },
+                "profit": {
+                  "type": "number"
+                },
+                "minFunds": {
+                  "type": "number"
+                },
+                "maxFunds": {
+                  "type": "number"
+                },
+                "cagr": {
+                  "type": "number",
+                  "description": "CAGR as a percentage."
+                },
+                "maxDrawdownPercentage": {
+                  "type": "number",
+                  "description": "Max drawdown, as a negative percentage."
+                },
+                "marRatio": {
+                  "type": "number"
+                },
+                "sharpeRatio": {
+                  "type": "number"
+                },
+                "sortinoRatio": {
+                  "type": "number"
+                },
+                "winPercentage": {
+                  "type": "number"
+                },
+                "numberOfTrades": {
+                  "type": "integer"
+                },
+                "numberOfOpenTrades": {
+                  "type": "integer"
+                },
+                "averageProfitPerLot": {
+                  "type": "number"
+                },
+                "averageGainPerLot": {
+                  "type": "number"
+                },
+                "averageLossPerLot": {
+                  "type": "number"
+                },
+                "maxGainPerLot": {
+                  "type": "number"
+                },
+                "maxLossPerLot": {
+                  "type": "number"
+                },
+                "averageDaysInTrade": {
+                  "type": "number"
+                },
+                "averageMinutesInTrade": {
+                  "type": "number"
+                },
+                "totalPremium": {
+                  "type": "number"
+                },
+                "premiumCaptureRatePercentage": {
+                  "type": "number"
+                },
+                "annualMetrics": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "year": {
+                        "type": "integer"
+                      },
+                      "profitLoss": {
+                        "type": "number"
+                      },
+                      "profitLossPercentage": {
+                        "type": "number"
+                      },
+                      "maxDrawdownPercentage": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  "description": "Metrics per calendar year."
+                },
+                "strategyResults": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "savedBacktestId": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "numberOfTrades": {
+                        "type": "integer"
+                      },
+                      "profit": {
+                        "type": "number"
+                      },
+                      "winPercentage": {
+                        "type": "number"
+                      },
+                      "profitSharePercentage": {
+                        "type": "number"
+                      }
+                    }
+                  },
+                  "description": "Contribution per strategy."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/cancel_portfolio": {
+      "post": {
+        "operationId": "CancelPortfolio",
+        "summary": "Cancel portfolio",
+        "description": "Stops a running or queued portfolio run.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "runId": {
+                  "type": "string",
+                  "description": "Run id, as returned by RunBacktest or RunPortfolio."
+                }
+              },
+              "required": [
+                "runId"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "runId": {
+                  "type": "string",
+                  "description": "Run id."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "queued, running, complete, failed or cancelled."
+                },
+                "pollAfterMs": {
+                  "type": "integer",
+                  "description": "Milliseconds until the next status call; absent in a final state."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/list_portfolios": {
+      "post": {
+        "operationId": "ListPortfolios",
+        "summary": "List saved portfolios",
+        "description": "Saved portfolios, sorted by name, with headline metrics.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "integer",
+                  "description": "Maximum number of entries per page."
+                },
+                "offset": {
+                  "type": "integer",
+                  "description": "Zero-based start position; pass nextOffset from the previous response."
+                },
+                "includeArchived": {
+                  "type": "boolean",
+                  "description": "Include archived entries.",
+                  "default": false
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "tags": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "isShared": {
+                        "type": "boolean"
+                      },
+                      "isArchived": {
+                        "type": "boolean"
+                      },
+                      "rangeStart": {
+                        "type": "string"
+                      },
+                      "rangeEnd": {
+                        "type": "string"
+                      },
+                      "strategyCount": {
+                        "type": "integer"
+                      },
+                      "startingFunds": {
+                        "type": "number"
+                      },
+                      "endingFunds": {
+                        "type": "number"
+                      },
+                      "profit": {
+                        "type": "number"
+                      },
+                      "cagr": {
+                        "type": "number"
+                      },
+                      "maxDrawdownPercentage": {
+                        "type": "number"
+                      },
+                      "marRatio": {
+                        "type": "number"
+                      },
+                      "sharpeRatio": {
+                        "type": "number"
+                      },
+                      "sortinoRatio": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "totalCount": {
+                  "type": "integer"
+                },
+                "offset": {
+                  "type": "integer"
+                },
+                "nextOffset": {
+                  "type": "integer",
+                  "description": "Offset of the next page; null on the last page."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/get_saved_portfolio": {
+      "post": {
+        "operationId": "GetSavedPortfolio",
+        "summary": "Get saved portfolio",
+        "description": "Settings, strategies and metrics of a saved portfolio.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "savedPortfolioId": {
+                  "type": "string",
+                  "description": "Saved portfolio id (from ListPortfolios)."
+                }
+              },
+              "required": [
+                "savedPortfolioId"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "isShared": {
+                  "type": "boolean"
+                },
+                "isArchived": {
+                  "type": "boolean"
+                },
+                "settings": {
+                  "type": "object",
+                  "properties": {
+                    "rangeStart": {
+                      "type": "string"
+                    },
+                    "rangeEnd": {
+                      "type": "string"
+                    },
+                    "startingFunds": {
+                      "type": "number"
+                    },
+                    "closeOpenTradesAtTestCompletion": {
+                      "type": "boolean"
+                    },
+                    "monthlyWithdrawalMode": {
+                      "type": "string"
+                    },
+                    "monthlyWithdrawalAmount": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "strategies": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "savedBacktestId": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "underlying": {
+                        "type": "string"
+                      },
+                      "allocationPercentage": {
+                        "type": "number"
+                      },
+                      "maxAllocationAmount": {
+                        "type": "number"
+                      },
+                      "maxContractsPerTrade": {
+                        "type": "integer"
+                      },
+                      "capitalPerContract": {
+                        "type": "number"
+                      },
+                      "ignoreMarginRequirements": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                },
+                "result": {
+                  "type": "object",
+                  "properties": {
+                    "startingFunds": {
+                      "type": "number"
+                    },
+                    "endingFunds": {
+                      "type": "number"
+                    },
+                    "profit": {
+                      "type": "number"
+                    },
+                    "minFunds": {
+                      "type": "number"
+                    },
+                    "maxFunds": {
+                      "type": "number"
+                    },
+                    "cagr": {
+                      "type": "number",
+                      "description": "CAGR as a percentage."
+                    },
+                    "maxDrawdownPercentage": {
+                      "type": "number",
+                      "description": "Max drawdown, as a negative percentage."
+                    },
+                    "marRatio": {
+                      "type": "number"
+                    },
+                    "sharpeRatio": {
+                      "type": "number"
+                    },
+                    "sortinoRatio": {
+                      "type": "number"
+                    },
+                    "winPercentage": {
+                      "type": "number"
+                    },
+                    "numberOfTrades": {
+                      "type": "integer"
+                    },
+                    "numberOfOpenTrades": {
+                      "type": "integer"
+                    },
+                    "averageProfitPerLot": {
+                      "type": "number"
+                    },
+                    "averageGainPerLot": {
+                      "type": "number"
+                    },
+                    "averageLossPerLot": {
+                      "type": "number"
+                    },
+                    "maxGainPerLot": {
+                      "type": "number"
+                    },
+                    "maxLossPerLot": {
+                      "type": "number"
+                    },
+                    "averageDaysInTrade": {
+                      "type": "number"
+                    },
+                    "averageMinutesInTrade": {
+                      "type": "number"
+                    },
+                    "totalPremium": {
+                      "type": "number"
+                    },
+                    "premiumCaptureRatePercentage": {
+                      "type": "number"
+                    },
+                    "annualMetrics": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "year": {
+                            "type": "integer"
+                          },
+                          "profitLoss": {
+                            "type": "number"
+                          },
+                          "profitLossPercentage": {
+                            "type": "number"
+                          },
+                          "maxDrawdownPercentage": {
+                            "type": "number"
+                          }
+                        }
+                      },
+                      "description": "Metrics per calendar year."
+                    },
+                    "strategyResults": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "savedBacktestId": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "numberOfTrades": {
+                            "type": "integer"
+                          },
+                          "profit": {
+                            "type": "number"
+                          },
+                          "winPercentage": {
+                            "type": "number"
+                          },
+                          "profitSharePercentage": {
+                            "type": "number"
+                          }
+                        }
+                      },
+                      "description": "Contribution per strategy."
+                    }
+                  }
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/save_portfolio": {
+      "post": {
+        "operationId": "SavePortfolio",
+        "summary": "Save portfolio run",
+        "description": "Saves a completed portfolio run as a new saved portfolio.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "runId": {
+                  "type": "string",
+                  "description": "Run id, as returned by RunBacktest or RunPortfolio."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Name as it appears in the list."
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Optional description."
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Optional tags."
+                },
+                "isShared": {
+                  "type": "boolean",
+                  "description": "Share. Defaults to false.",
+                  "default": false
+                }
+              },
+              "required": [
+                "runId",
+                "name"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "savedPortfolioId": {
+                  "type": "string",
+                  "description": "Saved portfolio id."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/replace_saved_portfolio": {
+      "post": {
+        "operationId": "ReplaceSavedPortfolio",
+        "summary": "Replace saved portfolio",
+        "description": "Overwrites a saved portfolio with a run. Cannot be undone.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "runId": {
+                  "type": "string",
+                  "description": "Run id, as returned by RunBacktest or RunPortfolio."
+                },
+                "savedPortfolioId": {
+                  "type": "string",
+                  "description": "Saved portfolio id (from ListPortfolios)."
+                }
+              },
+              "required": [
+                "runId",
+                "savedPortfolioId"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "savedPortfolioId": {
+                  "type": "string",
+                  "description": "Saved portfolio id."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/edit_saved_portfolio": {
+      "post": {
+        "operationId": "EditSavedPortfolio",
+        "summary": "Rename or tag saved portfolio",
+        "description": "Changes the name, description, tags, sharing or archived state. Only the fields you supply change.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "savedPortfolioId": {
+                  "type": "string",
+                  "description": "Saved portfolio id (from ListPortfolios)."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "New name. Omit to keep the current one."
+                },
+                "description": {
+                  "type": "string",
+                  "description": "New description. Empty text clears it."
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Complete new list of tags."
+                },
+                "isShared": {
+                  "type": "boolean",
+                  "description": "Share with other OptionOmega users."
+                },
+                "isArchived": {
+                  "type": "boolean",
+                  "description": "Archive or restore."
+                }
+              },
+              "required": [
+                "savedPortfolioId"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "savedPortfolioId": {
+                  "type": "string",
+                  "description": "Saved portfolio id."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/list_optimizer_parameters": {
+      "post": {
+        "operationId": "ListOptimizerParameters",
+        "summary": "List optimizer parameters",
+        "description": "Parameters of a saved backtest that RunOptimizer can sweep, with their limits.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "savedBacktestId": {
+                  "type": "string",
+                  "description": "Saved backtest id (from ListBacktests)."
+                }
+              },
+              "required": [
+                "savedBacktestId"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "savedBacktestId": {
+                  "type": "string"
+                },
+                "parameters": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "parameterPath": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "category": {
+                        "type": "string"
+                      },
+                      "valueType": {
+                        "type": "string"
+                      },
+                      "unit": {
+                        "type": "string"
+                      },
+                      "currentValue": {
+                        "type": "number"
+                      },
+                      "currentTime": {
+                        "type": "string"
+                      },
+                      "precision": {
+                        "type": "integer"
+                      },
+                      "wholeNumbersOnly": {
+                        "type": "boolean"
+                      },
+                      "allowedValues": {
+                        "type": "array",
+                        "items": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                },
+                "limits": {
+                  "type": "object",
+                  "properties": {
+                    "maxDimensions": {
+                      "type": "integer"
+                    },
+                    "maxStepsPerDimension": {
+                      "type": "integer"
+                    },
+                    "maxTotalIterations": {
+                      "type": "integer"
+                    },
+                    "minTimeMinutes": {
+                      "type": "integer"
+                    },
+                    "maxTimeMinutes": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/run_optimizer": {
+      "post": {
+        "operationId": "RunOptimizer",
+        "summary": "Run optimizer",
+        "description": "Starts a parameter sweep over a saved backtest. Then poll GetOptimizationStatus.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "savedBacktestId": {
+                  "type": "string",
+                  "description": "Saved backtest id (from ListBacktests)."
+                },
+                "dimensions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "parameterPath": {
+                        "type": "string",
+                        "description": "Path exactly as returned by ListOptimizerParameters."
+                      },
+                      "start": {
+                        "type": "number",
+                        "description": "First value (time: minutes since midnight)."
+                      },
+                      "step": {
+                        "type": "number",
+                        "description": "Step size; omit for sequence."
+                      },
+                      "end": {
+                        "type": "number",
+                        "description": "Last value, inclusive."
+                      }
+                    }
+                  },
+                  "description": "Parameters to sweep."
+                },
+                "rangeStart": {
+                  "type": "string",
+                  "description": "First day, yyyy-MM-dd; omit to keep the saved value."
+                },
+                "rangeEnd": {
+                  "type": "string",
+                  "description": "Last day, yyyy-MM-dd; omit to keep the saved value."
+                },
+                "startingFunds": {
+                  "type": "number",
+                  "description": "Starting funds; omit to keep the saved value."
+                }
+              },
+              "required": [
+                "savedBacktestId",
+                "dimensions"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "optimizationId": {
+                  "type": "string",
+                  "description": "Optimization id."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "queued, running, complete, failed or cancelled."
+                },
+                "progressPercent": {
+                  "type": "number",
+                  "description": "Progress as a percentage."
+                },
+                "currentPeriod": {
+                  "type": "string",
+                  "description": "Period currently being simulated."
+                },
+                "error": {
+                  "type": "string",
+                  "description": "Failure reason when status is failed."
+                },
+                "totalIterations": {
+                  "type": "integer",
+                  "description": "Number of cells in the grid."
+                },
+                "pollAfterMs": {
+                  "type": "integer",
+                  "description": "Milliseconds until the next status call; absent in a final state."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/get_optimization_status": {
+      "post": {
+        "operationId": "GetOptimizationStatus",
+        "summary": "Get optimization status",
+        "description": "Status and progress of an optimization.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "optimizationId": {
+                  "type": "string",
+                  "description": "Optimization id (from RunOptimizer or ListOptimizations)."
+                }
+              },
+              "required": [
+                "optimizationId"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "optimizationId": {
+                  "type": "string",
+                  "description": "Optimization id."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "queued, running, complete, failed or cancelled."
+                },
+                "progressPercent": {
+                  "type": "number",
+                  "description": "Progress as a percentage."
+                },
+                "currentPeriod": {
+                  "type": "string",
+                  "description": "Period currently being simulated."
+                },
+                "error": {
+                  "type": "string",
+                  "description": "Failure reason when status is failed."
+                },
+                "totalIterations": {
+                  "type": "integer",
+                  "description": "Number of cells in the grid."
+                },
+                "pollAfterMs": {
+                  "type": "integer",
+                  "description": "Milliseconds until the next status call; absent in a final state."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/cancel_optimization": {
+      "post": {
+        "operationId": "CancelOptimization",
+        "summary": "Cancel optimization",
+        "description": "Stops a running or queued optimization.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "optimizationId": {
+                  "type": "string",
+                  "description": "Optimization id (from RunOptimizer or ListOptimizations)."
+                }
+              },
+              "required": [
+                "optimizationId"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "optimizationId": {
+                  "type": "string",
+                  "description": "Optimization id."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "queued, running, complete, failed or cancelled."
+                },
+                "progressPercent": {
+                  "type": "number",
+                  "description": "Progress as a percentage."
+                },
+                "currentPeriod": {
+                  "type": "string",
+                  "description": "Period currently being simulated."
+                },
+                "error": {
+                  "type": "string",
+                  "description": "Failure reason when status is failed."
+                },
+                "totalIterations": {
+                  "type": "integer",
+                  "description": "Number of cells in the grid."
+                },
+                "pollAfterMs": {
+                  "type": "integer",
+                  "description": "Milliseconds until the next status call; absent in a final state."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/list_optimizations": {
+      "post": {
+        "operationId": "ListOptimizations",
+        "summary": "List optimizations",
+        "description": "All optimizations of a saved backtest, newest first.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "savedBacktestId": {
+                  "type": "string",
+                  "description": "Saved backtest id (from ListBacktests)."
+                },
+                "limit": {
+                  "type": "integer",
+                  "description": "Maximum number of entries per page."
+                },
+                "offset": {
+                  "type": "integer",
+                  "description": "Zero-based start position; pass nextOffset from the previous response."
+                }
+              },
+              "required": [
+                "savedBacktestId"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "progressPercent": {
+                        "type": "number"
+                      },
+                      "currentPeriod": {
+                        "type": "string"
+                      },
+                      "error": {
+                        "type": "string"
+                      },
+                      "createdAt": {
+                        "type": "string"
+                      },
+                      "underlying": {
+                        "type": "string"
+                      },
+                      "rangeStart": {
+                        "type": "string"
+                      },
+                      "rangeEnd": {
+                        "type": "string"
+                      },
+                      "startingFunds": {
+                        "type": "number"
+                      },
+                      "totalIterations": {
+                        "type": "integer"
+                      },
+                      "dimensions": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "parameterPath": {
+                              "type": "string"
+                            },
+                            "label": {
+                              "type": "string"
+                            },
+                            "valueType": {
+                              "type": "string",
+                              "description": "number, time or sequence."
+                            },
+                            "start": {
+                              "type": "number"
+                            },
+                            "step": {
+                              "type": "number"
+                            },
+                            "end": {
+                              "type": "number"
+                            },
+                            "values": {
+                              "type": "array",
+                              "items": {
+                                "type": "number"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "bestMetrics": {
+                        "type": "object",
+                        "properties": {
+                          "profit": {
+                            "type": "number"
+                          },
+                          "profitPerTrade": {
+                            "type": "number"
+                          },
+                          "winPercentage": {
+                            "type": "number"
+                          },
+                          "premiumCaptureRatePercentage": {
+                            "type": "number"
+                          },
+                          "cagr": {
+                            "type": "number"
+                          },
+                          "maxDrawdownPercentage": {
+                            "type": "number"
+                          },
+                          "marRatio": {
+                            "type": "number"
+                          },
+                          "sharpeRatio": {
+                            "type": "number"
+                          },
+                          "sortinoRatio": {
+                            "type": "number"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "totalCount": {
+                  "type": "integer"
+                },
+                "offset": {
+                  "type": "integer"
+                },
+                "nextOffset": {
+                  "type": "integer",
+                  "description": "Offset of the next page; null on the last page."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/get_optimization_results": {
+      "post": {
+        "operationId": "GetOptimizationResults",
+        "summary": "Get optimization results",
+        "description": "Cells of a completed optimization; use sortBy to get the best cell first.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "optimizationId": {
+                  "type": "string",
+                  "description": "Optimization id (from RunOptimizer or ListOptimizations)."
+                },
+                "sortBy": {
+                  "type": "string",
+                  "description": "Metric to sort by, e.g. cagr, marRatio, maxDrawdownPercentage."
+                },
+                "direction": {
+                  "type": "string",
+                  "description": "desc (default, best first) or asc."
+                },
+                "limit": {
+                  "type": "integer",
+                  "description": "Cells per page, default 100, max 500."
+                },
+                "offset": {
+                  "type": "integer",
+                  "description": "Zero-based start position; pass nextOffset from the previous response."
+                }
+              },
+              "required": [
+                "optimizationId"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "optimizationId": {
+                  "type": "string"
+                },
+                "savedBacktestId": {
+                  "type": "string"
+                },
+                "dimensions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "parameterPath": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "valueType": {
+                        "type": "string",
+                        "description": "number, time or sequence."
+                      },
+                      "start": {
+                        "type": "number"
+                      },
+                      "step": {
+                        "type": "number"
+                      },
+                      "end": {
+                        "type": "number"
+                      },
+                      "values": {
+                        "type": "array",
+                        "items": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  }
+                },
+                "cells": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "index": {
+                        "type": "integer"
+                      },
+                      "coordinate": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "parameterPath": {
+                              "type": "string"
+                            },
+                            "label": {
+                              "type": "string"
+                            },
+                            "value": {
+                              "type": "number"
+                            },
+                            "time": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "error": {
+                        "type": "string"
+                      },
+                      "profit": {
+                        "type": "number"
+                      },
+                      "cagr": {
+                        "type": "number"
+                      },
+                      "sharpeRatio": {
+                        "type": "number"
+                      },
+                      "sortinoRatio": {
+                        "type": "number"
+                      },
+                      "marRatio": {
+                        "type": "number"
+                      },
+                      "maxDrawdownPercentage": {
+                        "type": "number"
+                      },
+                      "winPercentage": {
+                        "type": "number"
+                      },
+                      "premiumCaptureRatePercentage": {
+                        "type": "number"
+                      },
+                      "numberOfTrades": {
+                        "type": "integer"
+                      },
+                      "endingFunds": {
+                        "type": "number"
+                      },
+                      "averageProfitPerLot": {
+                        "type": "number"
+                      },
+                      "averageGainPerLot": {
+                        "type": "number"
+                      },
+                      "averageLossPerLot": {
+                        "type": "number"
+                      },
+                      "maxGainPerLot": {
+                        "type": "number"
+                      },
+                      "maxLossPerLot": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "sortedBy": {
+                  "type": "string"
+                },
+                "direction": {
+                  "type": "string"
+                },
+                "totalCount": {
+                  "type": "integer"
+                },
+                "offset": {
+                  "type": "integer"
+                },
+                "nextOffset": {
+                  "type": "integer",
+                  "description": "Offset of the next page; null on the last page."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/list_automated_strategies": {
+      "post": {
+        "operationId": "ListAutomatedStrategies",
+        "summary": "List automated strategies",
+        "description": "Automated strategies that the trading platform runs live in the brokerage account, sorted by name. GetAutomatedStrategy returns the full settings.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "integer",
+                  "description": "Maximum number of entries per page, default 100, max. 500."
+                },
+                "offset": {
+                  "type": "integer",
+                  "description": "Zero-based start position; pass nextOffset from the previous response."
+                },
+                "includeArchived": {
+                  "type": "boolean",
+                  "description": "Include archived entries.",
+                  "default": false
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Id for GetAutomatedStrategy."
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "linkedBacktestId": {
+                        "type": "string",
+                        "description": "savedBacktestId of the backtest the strategy was created from; null if created from scratch. Not updated by later changes."
+                      },
+                      "underlying": {
+                        "type": "string"
+                      },
+                      "allocationType": {
+                        "type": "string",
+                        "description": "Percentage, FixedValue, FixedQuantity or CapitalPerContract."
+                      },
+                      "allocationAmount": {
+                        "type": "number",
+                        "description": "Sizing value; meaning depends on allocationType."
+                      },
+                      "accountName": {
+                        "type": "string",
+                        "description": "Name of the brokerage account; null if the account was removed."
+                      },
+                      "tags": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "isActive": {
+                        "type": "boolean",
+                        "description": "Strategy is running: opens new trades and manages open ones."
+                      },
+                      "isArchived": {
+                        "type": "boolean"
+                      },
+                      "pauseNewTrades": {
+                        "type": "boolean",
+                        "description": "New trades paused; open trades are still managed."
+                      }
+                    }
+                  }
+                },
+                "totalCount": {
+                  "type": "integer"
+                },
+                "offset": {
+                  "type": "integer"
+                },
+                "nextOffset": {
+                  "type": "integer",
+                  "description": "Offset of the next page; null on the last page."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/get_automated_strategy": {
+      "post": {
+        "operationId": "GetAutomatedStrategy",
+        "summary": "Get automated strategy",
+        "description": "One automated strategy with its current live settings. Times in US Eastern market time, prices and premiums in dollars per share.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "strategyId": {
+                  "type": "string",
+                  "description": "Id of the automated strategy (from ListAutomatedStrategies)."
+                }
+              },
+              "required": [
+                "strategyId"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Your own notes on the strategy."
+                },
+                "linkedBacktestId": {
+                  "type": "string",
+                  "description": "savedBacktestId of the backtest the strategy was created from; null if created from scratch. Not updated by later changes."
+                },
+                "underlying": {
+                  "type": "string"
+                },
+                "accountName": {
+                  "type": "string",
+                  "description": "Name of the brokerage account; null if the account was removed."
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "isActive": {
+                  "type": "boolean",
+                  "description": "Strategy is running: opens new trades and manages open ones."
+                },
+                "isArchived": {
+                  "type": "boolean"
+                },
+                "pauseNewTrades": {
+                  "type": "boolean",
+                  "description": "New trades paused; open trades are still managed."
+                },
+                "contractSelection": {
+                  "type": "object",
+                  "description": "Option structure (legs) and strike selection."
+                },
+                "allocation": {
+                  "type": "object",
+                  "description": "Position size and max. open trades."
+                },
+                "entry": {
+                  "type": "object",
+                  "description": "Entry conditions (times, frequency, filters)."
+                },
+                "legGroups": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Leg groups with profit, loss and exit rules."
+                },
+                "execution": {
+                  "type": "object",
+                  "description": "Order execution for entry and exit."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/list_open_automated_trades": {
+      "post": {
+        "operationId": "ListOpenAutomatedTrades",
+        "summary": "List open live trades",
+        "description": "Open trades of the automated strategies as shown on the app's live page. Values are approximations (updated about every minute during market hours, see lastUpdated). Rows are arrays; tradeColumns names the columns.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "strategyIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Only trades of these strategies (ids from ListAutomatedStrategies)."
+                },
+                "sortBy": {
+                  "type": "string",
+                  "description": "opened (default) or profit."
+                },
+                "direction": {
+                  "type": "string",
+                  "description": "asc (default, oldest first) or desc."
+                },
+                "includeExitRules": {
+                  "type": "boolean",
+                  "description": "Include exit rules per trade as columns legGroup and exitExecution (makes rows much larger).",
+                  "default": false
+                },
+                "limit": {
+                  "type": "integer",
+                  "description": "Trades per page, default 1000, max 5000."
+                },
+                "offset": {
+                  "type": "integer",
+                  "description": "Zero-based start position; pass nextOffset from the previous response."
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "tradeColumns": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Column names of the rows in trades."
+                },
+                "trades": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "description": "One row per trade."
+                },
+                "sortedBy": {
+                  "type": "string"
+                },
+                "direction": {
+                  "type": "string"
+                },
+                "totalCount": {
+                  "type": "integer"
+                },
+                "offset": {
+                  "type": "integer"
+                },
+                "nextOffset": {
+                  "type": "integer",
+                  "description": "Offset of the next page; null on the last page."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/list_closed_automated_trades": {
+      "post": {
+        "operationId": "ListClosedAutomatedTrades",
+        "summary": "List closed live trades",
+        "description": "Closed trades of the automated strategies by date of last close (US Eastern). Default: last 30 days, at most 90 days per call. Includes halted trades. Rows are arrays; tradeColumns names the columns.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "closedFrom": {
+                  "type": "string",
+                  "description": "First day, yyyy-MM-dd, inclusive; default 29 days before closedTo."
+                },
+                "closedTo": {
+                  "type": "string",
+                  "description": "Last day, yyyy-MM-dd, inclusive; default today."
+                },
+                "strategyIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Only trades of these strategies (ids from ListAutomatedStrategies)."
+                },
+                "outcome": {
+                  "type": "string",
+                  "description": "winners or losers; omit for all."
+                },
+                "reasonClosed": {
+                  "type": "string",
+                  "description": "e.g. Profit Target or Stop Loss."
+                },
+                "sortBy": {
+                  "type": "string",
+                  "description": "opened (default), closed or profit."
+                },
+                "direction": {
+                  "type": "string",
+                  "description": "desc (default, newest first) or asc."
+                },
+                "includeExitRules": {
+                  "type": "boolean",
+                  "description": "Include exit rules per trade as columns legGroup and exitExecution (makes rows much larger).",
+                  "default": false
+                },
+                "limit": {
+                  "type": "integer",
+                  "description": "Trades per page, default 1000, max 5000."
+                },
+                "offset": {
+                  "type": "integer",
+                  "description": "Zero-based start position; pass nextOffset from the previous response."
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "tradeColumns": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Column names of the rows in trades."
+                },
+                "trades": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "description": "One row per trade."
+                },
+                "closedFrom": {
+                  "type": "string",
+                  "description": "Applied first day, yyyy-MM-dd."
+                },
+                "closedTo": {
+                  "type": "string",
+                  "description": "Applied last day, yyyy-MM-dd."
+                },
+                "sortedBy": {
+                  "type": "string"
+                },
+                "direction": {
+                  "type": "string"
+                },
+                "totalCount": {
+                  "type": "integer"
+                },
+                "offset": {
+                  "type": "integer"
+                },
+                "nextOffset": {
+                  "type": "integer",
+                  "description": "Offset of the next page; null on the last page."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/get_trade_log": {
+      "post": {
+        "operationId": "GetTradeLog",
+        "summary": "Get trade log",
+        "description": "Individual trades of a backtest or portfolio. Supply exactly one of the three ids. Rows are arrays; tradeColumns names the columns.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "runId": {
+                  "type": "string",
+                  "description": "Id of a run. Alternative to the other ids."
+                },
+                "savedBacktestId": {
+                  "type": "string",
+                  "description": "Id of a saved backtest. Alternative to the other ids."
+                },
+                "savedPortfolioId": {
+                  "type": "string",
+                  "description": "Id of a saved portfolio. Alternative to the other ids."
+                },
+                "outcome": {
+                  "type": "string",
+                  "description": "winners or losers; omit for all."
+                },
+                "reasonClosed": {
+                  "type": "string",
+                  "description": "e.g. Profit Target or Stop Loss."
+                },
+                "strategyIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Portfolio only: filter by strategy ids."
+                },
+                "sortBy": {
+                  "type": "string",
+                  "description": "opened (default), closed, profit, maxLoss or maxProfit."
+                },
+                "direction": {
+                  "type": "string",
+                  "description": "desc (default) or asc."
+                },
+                "limit": {
+                  "type": "integer",
+                  "description": "Trades per page, default 1000, max 5000."
+                },
+                "offset": {
+                  "type": "integer",
+                  "description": "Zero-based start position; pass nextOffset from the previous response."
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "tradeColumns": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Column names of the rows in trades."
+                },
+                "trades": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "description": "One row per trade."
+                },
+                "sortedBy": {
+                  "type": "string"
+                },
+                "direction": {
+                  "type": "string"
+                },
+                "totalCount": {
+                  "type": "integer"
+                },
+                "offset": {
+                  "type": "integer"
+                },
+                "nextOffset": {
+                  "type": "integer",
+                  "description": "Offset of the next page; null on the last page."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/get_equity_curve": {
+      "post": {
+        "operationId": "GetEquityCurve",
+        "summary": "Get equity curve",
+        "description": "Daily equity curve, at most two years per call. Supply exactly one of the three ids.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "runId": {
+                      "type": "string",
+                      "description": "Id of a run."
+                    },
+                    "savedBacktestId": {
+                      "type": "string",
+                      "description": "Id of a saved backtest."
+                    },
+                    "savedPortfolioId": {
+                      "type": "string",
+                      "description": "Id of a saved portfolio."
+                    },
+                    "seriesStart": {
+                      "type": "string",
+                      "description": "First day, yyyy-MM-dd."
+                    },
+                    "seriesEnd": {
+                      "type": "string",
+                      "description": "Last day, yyyy-MM-dd; at most two years after seriesStart."
+                    }
+                  },
+                  "required": [
+                    "seriesStart",
+                    "seriesEnd"
+                  ]
+                }
+              },
+              "required": [
+                "parameters"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "seriesStart": {
+                  "type": "string"
+                },
+                "seriesEnd": {
+                  "type": "string"
+                },
+                "pointColumns": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Column names of the rows in points."
+                },
+                "points": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "description": "One row per trading day."
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Server note about this response."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/list_tools": {
+      "post": {
+        "operationId": "ListTools",
+        "summary": "Get MCP server tool list",
+        "description": "Calls tools/list on the MCP server (not a tool call). raw contains the complete tool list as unchanged JSON text, e.g. to detect changes on the server.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "toolCount": {
+                  "type": "integer",
+                  "description": "Number of tools."
+                },
+                "toolNames": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Tool names, alphabetical."
+                },
+                "tools": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "Tool definitions (name, description, inputSchema …)."
+                },
+                "raw": {
+                  "type": "string",
+                  "description": "Raw response: the complete tool list as JSON text."
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    },
+    "/tools/get_usage_limits": {
+      "post": {
+        "operationId": "GetUsageLimits",
+        "summary": "Get usage limits",
+        "description": "Backtests and optimizations remaining today.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tool result",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "backtests": {
+                  "type": "object",
+                  "properties": {
+                    "used": {
+                      "type": "integer"
+                    },
+                    "dailyLimit": {
+                      "type": "integer"
+                    },
+                    "remaining": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "optimizations": {
+                  "type": "object",
+                  "properties": {
+                    "used": {
+                      "type": "integer"
+                    },
+                    "dailyLimit": {
+                      "type": "integer"
+                    },
+                    "remaining": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "resetsAt": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error from the tool or the MCP server"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "oauth2-auth": {
+      "type": "oauth2",
+      "flow": "accessCode",
+      "authorizationUrl": "https://authkit.optionomega.com/oauth2/authorize",
+      "tokenUrl": "https://authkit.optionomega.com/oauth2/token",
+      "scopes": {
+        "openid profile email offline_access": "openid profile email offline_access"
+      }
+    }
+  },
+  "security": [
+    {
+      "oauth2-auth": [
+        "openid profile email offline_access"
+      ]
+    }
+  ]
+}
